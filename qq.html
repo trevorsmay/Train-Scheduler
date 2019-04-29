@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+<head>
+<meta charset="UTF-8">
+<title>Quick Quote</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+        <div class="jumbotron">
+                <h1 class="display-4">Test API</h1>
+                <hr class="my-4">
+              </div>
+         
+              <form id="yelp-form">
+                    <label for="yelp-input">Restaraunt</label>
+                    <input type="text" id="yelp-input"><br>
+              
+                    <!-- Button triggers new movie to be added -->
+                    <input id="add-movie" type="submit" value="Add a Movie, Yo!">
+                  </form>
+                  <div class="yelp-view"></div>
+</div>
+
+<script>
+$document.ready(function() {
+
+var foodInput=[];
+
+function displayFoodOptions(){
+
+var food= $(this).attr("data-name");
+var queryURL="YelpAPIserg-osipchukV1.p.rapidapi.com" + food + "e4edf13618msh3e577d5bc90d0dbp12e56cjsn845bd58d22fa";
+
+
+$.ajax({
+    url: queryURL,
+    method: "GET"
+}).then(function(response) {
+$("#yelp-view").text(JSON.stringify(response));
+
+})
+}
+
+});
+</script>
+
+</body>
+</html>

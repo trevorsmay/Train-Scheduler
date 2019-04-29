@@ -1,0 +1,24 @@
+body {
+    background-image: url("https://streetsy.typepad.com/.a/6a00d83451e6f169e201348545a9de970c-pi");
+    background-repeat: repeat;
+    background-position: center;
+    background-color: lightgray;
+}
+
+.form-group {
+    float: left;
+}
+
+.jumbotron {
+    align-content: center;
+}
+
+table {
+  float: right;
+  background-color: #eee;  
+}
+
+.form-group {
+    background-color: #eee;
+    padding: 10px;
+}

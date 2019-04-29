@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="UTF-8">
+<title>The Real RTD Schedule</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+        <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+        <link rel="stylesheet" type="text/css" href="/Users/trevormay/Desktop/Train-Scheduler/style.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+        </head>
+<body>
+<div class="container">
+        <div class="jumbotron">
+                <div class="container">
+                <img id="js-headerLogo" alt="RTD" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTE1cHgiIGhlaWdodD0iOTZweCIgdmlld0JveD0iMCAwIDExNSA5NiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTE1IDk2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Im0wIDBoMTE1djk2aC0xMTV6IiB3aWR0aD0iMTE1IiBoZWlnaHQ9Ijk2IiBmaWxsPSIjZTMxODM3Ii8+PHBhdGggZD0ibTMyLjYgNTAuNyAxNS4zIDE1LjNoLTQuOWwtMTEuOC0xMS44aC00Ljl2MTEuOGgtMy40di0xNS4zem03LjEtOC40YzAgMy43LTMgNi44LTYuOCA2LjhoLTEwdi0xNGgxMC4xYzMuNiAwIDYuNyAzLjMgNi43IDcuMnptLTMuNCAwYzAtMS45LTEuNi0zLjctMy4zLTMuN2gtNi42djdoNi42YzEuOCAwIDMuMy0xLjUgMy4zLTMuM3ptMTgtNy4ydjMwLjloLTRsLTE1LjUtMTUuNWMzLjgtLjkgNi42LTQuMiA2LjYtOC4zIDAtMi45LTEuNC01LjUtMy41LTcuMXptLTMuNCAzLjVoLTYuNmMuNCAxLjIuNiAyLjQuNiAzLjcgMCAzLjctMS43IDctNC4zIDkuMmwxMC4zIDEwLjN6bTI4LjUgMjIuM2gtNy45di0yNS44aDcuOWM2LjkgMCAxMi43IDYgMTIuNyAxMyAwIDcuMS01LjcgMTIuOC0xMi43IDEyLjh6bS00LjUtMy41aDQuNWM1LjEgMCA5LjMtNC4yIDkuMy05LjMgMC01LjItNC4yLTkuNi05LjMtOS42aC00LjV6bTE3LjItMjJjLTMuNC0zLjUtNy45LTUuNS0xMi43LTUuNWgtNjEuN3YzNmgzLjR2LTMyLjVoNTguM2MzLjggMCA3LjUgMS42IDEwLjIgNC40czQuMiA2LjUgNC4yIDEwLjRjMCA4LTYuNSAxNC40LTE0LjQgMTQuNGgtOS43di0yNy41aC0xMy42djMwLjloMy40di0yNy40aDYuOHYyNy40aDEzLjFjOS44IDAgMTcuOS04IDE3LjktMTcuOSAwLTQuNy0xLjktOS4yLTUuMi0xMi43eiIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPgo=">
+                <h3 class="display-4">You'll get there, maybe, and in one piece, maybe.</h3>
+            </div>
+        </div>
+
+<form>
+    <div class="form-group col-4">
+        <label for="train-name-input">Train Name</label>
+        <input class="form-control" id="train-name-input" placeholder="Old and Rusty" type="text">
+        <label for="arrival-time-input">Approximate Train Time +/- 1 Day</label>
+        <input class="form-control" id="arrival-time-input" placeholder="Always Late" type="text">
+        <label for="train-destination">Hopeful Destination</label>
+        <input class="form-control" id="train-destination" placeholder="No Promises" type="text">
+        <label for="frequency-time">Frequency (min)</label>
+        <input class="form-control" id="frequency-time" placeholder="15 Minutes?" type="text">
+        <br>
+        <button class="submit">Submit</button>
+    </div>
+</form>
+<table class="table table-sm table-hover col-6" id="train-info-table">
+<thead>
+    <tr>
+        <th scope="col">Train Name</th>
+        <th scope="col">Travel Time</th>
+        <th scope="col">Destination</th>
+        <th scope="col">Frequency (min)</th>
+        <th scope="col">Next Train</th>
+    </tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+
+<script>
+//firebase initialize 
+    var config = {
+    apiKey: "AIzaSyACcig_eOdOuG5JQkw6bfLRdPdDtn-OQ8Y",
+    authDomain: "train-scheduler-f26ad.firebaseapp.com",
+    databaseURL: "https://train-scheduler-f26ad.firebaseio.com",
+    projectId: "train-scheduler-f26ad",
+    storageBucket: "train-scheduler-f26ad.appspot.com",
+    messagingSenderId: "453562998620"
+  };
+
+  firebase.initializeApp(config);
+
+  var database = firebase.database();
+
+// button for adding rider info
+$("button").on("click", function(event){
+    event.preventDefault();
+
+//user input 
+    var trainName= $("#train-name-input").val().trim();
+    var arrivalTime= $("#arrival-time-input").val().trim();
+    var trainDestination= $("#train-destination").val().trim();
+    var trainFrequency= $("#frequency-time").val().trim();
+
+// create local object for data storage.    
+    var newTrain= {
+        name: trainName,
+        time: arrivalTime,
+        destination: trainDestination,
+        frequency: trainFrequency,
+    };
+
+// uploads employee data to the database.    
+    database.ref().push(newTrain);
+
+//logtime
+console.log(newTrain.name);    
+console.log(newTrain.time);    
+console.log(newTrain.destination);    
+console.log(newTrain.frequency);    
+
+
+//clear text boxes
+$("#train-name-input").val("");
+$("#arrival-time-input").val("");
+$("#train-destination").val("");
+$("#frequency-times").val("");
+});
+
+//create Firebase event for adding employee to the database
+database.ref().on("child_added", function(childSnapShot) {
+    console.log(childSnapShot.val());
+
+    var trainName= childSnapShot.val().name;
+    var arrivalTime= childSnapShot.val().time;
+    var trainDestination= childSnapShot.val().destination;
+    var trainFrequency= childSnapShot.val().frequency;
+
+
+console.log(trainName);
+console.log(arrivalTime);
+console.log(trainDestination);
+console.log(trainFrequency);
+
+
+
+var firstTrain= moment(arrivalTime, "HH:mm").subtract(1, "years");
+console.log(firstTrain);
+
+//current time:
+var currentTime = moment();
+console.log("Current Time: " + moment(currentTime).format("hh:mm"));
+
+//difference between the times
+var diffTime = moment().diff(moment(firstTrain), "minutes");
+console.log(firstTrain);
+
+//time apart remainder
+var tRemainder = diffTime % trainFrequency;
+console.log(tRemainder);
+
+var tMinutesTillTrain = trainFrequency - tRemainder;
+console.log("Minutes Till Train: " + tMinutesTillTrain);
+
+//next train
+var nextTrain = moment().add(tMinutesTillTrain, "m").format("hh:mm A");
+console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm A"));
+
+// sets content labels of table
+var newRow = $("<tr>").append(
+    $("<td>").text(trainName),
+    $("<td>").text(arrivalTime),
+    $("<td>").text(trainDestination),    
+    $("<td>").text(trainFrequency),
+    $("<td>").text(nextTrain)        
+);
+
+//adds new row to table
+$("#train-info-table > tbody").append(newRow);
+
+});
+
+    </script>
+</body>
+
+</html>
