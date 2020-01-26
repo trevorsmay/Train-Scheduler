@@ -16,3 +16,7 @@ Firebase
 Jquery
 Moment.JS
 
+## Acknowledgments
+
+This application was built as a homework assignment for the DU/Trilogy Full-Stack Coding Bootcamp.
+
