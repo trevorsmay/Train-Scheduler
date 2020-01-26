@@ -16,6 +16,10 @@ Firebase
 Jquery
 Moment.JS
 
+## Author
+
+Trevor May
+
 ## Acknowledgments
 
 This application was built as a homework assignment for the DU/Trilogy Full-Stack Coding Bootcamp.
